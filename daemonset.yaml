@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: daemonset-ns
+  name: daemonset-name
+  labels:
+    app: daemonset-label
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: daemonset-pod
+  template:
+    metadata:
+      labels:
+        app: daemonset-pod
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+          volumeMounts:
+            - name: host-logs
+              mountPath: /logs
+
+      volumes:
+        - name: host-logs
+          hostPath:
+            path: /host/logs
+            type: Directory
