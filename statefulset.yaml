@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-name
+  namespace: statefulset-ns
+  labels:
+    app: statefulset-label
+spec:
+  selector:
+    matchLabels:
+      app: nginx-pod
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: nginx-container
+          image: nginx:1.25
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: nginx-storage
+              mountPath: /logs
+  volumeClaimTemplates:
+    - metadata:
+        name: nginx-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
